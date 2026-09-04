@@ -250,10 +250,8 @@ nav button{height:45px;color:#007aff;font-size:13px;border-radius:10px}
 
 <section id="customerPage" class="hidden">
 <div class="card">
-<label>新しい客先を登録</label>
 <input id="newCustomerName" placeholder="取引先">
-<label style="margin-top:12px">部署名</label>
-<input id="newDepartmentName" placeholder="部署名">
+<input id="newDepartmentName" placeholder="部署名" style="margin-top:12px">
 <button id="addCustomerBtn">客先を登録</button>
 </div>
 <div class="card"><label>登録済み客先</label><div id="customerList"></div><div id="customerDetail"></div></div>
@@ -1257,7 +1255,7 @@ function show(page){
     delivery:"納品登録",
     deliveryHistory:"納品履歴",
     chem:"薬品登録",
-    customer:"客先登録"
+    customer:"取引先"
   };
   if($("title")) $("title").textContent=titles[page]||"薬品配達・容量計算";
 
