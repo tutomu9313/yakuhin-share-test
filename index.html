@@ -59,6 +59,8 @@ button{height:48px;border-radius:13px;font-size:16px;font-weight:700;margin-top:
 .box{background:#f5f5f7;border-radius:14px;padding:12px}
 .box strong{font-size:19px}
 .item{padding:14px 4px;border-bottom:1px solid #e5e5ea}
+#registeredChemicalSelect{height:240px!important;min-height:240px!important;overflow-y:auto!important;padding:0!important;border-radius:12px!important}
+#registeredChemicalSelect option{padding:3px 10px;min-height:20px}
 .item b{font-size:16px}
 .note{font-size:12px;color:#8e8e93}
 nav{height:70px;width:390px;max-width:100%;padding:8px 6px 10px;background:#fff;border-top:1px solid #d1d1d6;box-shadow:0 -4px 14px #00000008}
@@ -1069,11 +1071,54 @@ function renderHistory(){
 let editingChemIndex=-1;
 /* ===== 薬品登録 ===== */
 function renderChemList(){
- $("chemList").innerHTML="";
- chemicals.map((c,i)=>({c,i})).sort(chemCompare).forEach(({c,i})=>{
-   const div=document.createElement("div");div.className="item";div.textContent=c.name;div.onclick=()=>openChemModal(i);$("chemList").appendChild(div);
+ const box=$("chemList");
+ const detail=$("chemDetail");
+ box.innerHTML="";
+ detail.innerHTML="";
+ const sorted=chemicals.map((c,i)=>({c,i})).sort(chemCompare);
+ if(!sorted.length){
+   box.innerHTML="<div style='color:#777;text-align:center;padding:10px'>登録済み薬品はありません。</div>";
+   return;
+ }
+ const select=document.createElement("select");
+ select.id="registeredChemicalSelect";
+ select.setAttribute("aria-label","登録済み薬品");
+ select.size=12;
+ select.style.width="100%";
+ select.style.boxSizing="border-box";
+ select.style.height="240px";
+ select.style.minHeight="240px";
+ select.style.overflowY="auto";
+ sorted.forEach(({c,i})=>{
+   const option=document.createElement("option");
+   option.value=String(i);
+   option.textContent=c.name;
+   select.appendChild(option);
  });
- $("chemDetail").innerHTML="";
+ select.selectedIndex=-1;
+ box.appendChild(select);
+ const editBtn=document.createElement("button");
+ editBtn.type="button";
+ editBtn.className="gray";
+ editBtn.textContent="選択した薬品を編集";
+ editBtn.disabled=true;
+ editBtn.style.marginTop="10px";
+ box.appendChild(editBtn);
+ select.onchange=()=>{
+   const i=Number(select.value);
+   if(!select.value||!Number.isInteger(i)||!chemicals[i]){
+     editBtn.disabled=true;
+     detail.innerHTML="";
+     return;
+   }
+   editBtn.disabled=false;
+   const c=chemicals[i];
+   detail.innerHTML="<div style='margin-top:10px;color:#666;font-size:13px'>比重："+esc(String(c.density??""))+(c.cmTsum!=null?"　cm/t積："+esc(String(c.cmTsum)):"")+(c.warning?"　<span style='color:#ff3b30'>警告対象</span>":"")+"</div>";
+ };
+ editBtn.onclick=()=>{
+   const i=Number(select.value);
+   if(select.value&&Number.isInteger(i)&&chemicals[i]) openChemModal(i);
+ };
 }
 function openChemModal(i){
  const c=chemicals[i];
