@@ -839,7 +839,7 @@ function renderDeliveryHistory(){
   if(dateInput)dateInput.value=selected;
   const rows=deliveryHistory.filter(x=>(x.date||"")===selected);
   $("deliveryCount").textContent=rows.length;
-  $("deliveryTotalKg").textContent=rows.reduce((s,x)=>s+Number(x.deliveryKg||0),0).toFixed(2);
+  $("deliveryTotalKg").textContent=formatQuantity(Number(rows.reduce((s,x)=>s+Number(x.deliveryKg||0),0).toFixed(2)));
   box.innerHTML="";
   if(!rows.length){
     box.innerHTML="<div class='card' style='text-align:center;color:#777'>この日の配達記録はありません。</div>";
