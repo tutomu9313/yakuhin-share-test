@@ -1108,16 +1108,54 @@ $("modalDeleteChem").onclick=()=>{
 /* ===== 客先登録 ===== */
 let editingCustomerIndex=-1;
 function renderCustomers(){
- $("customerList").innerHTML="";
- customers.map((n,i)=>({n,i})).sort((a,b)=>String(a.n).localeCompare(String(b.n),"ja",{numeric:true,sensitivity:"base"})).forEach(({n,i})=>{
- const div=document.createElement("div");div.className="item";
- const dept=departmentNames(n);
- div.innerHTML="<div>"+esc(n)+"</div>"+(dept.length?"<div style='margin-top:5px;color:#666;font-size:13px'>部署："+dept.map(esc).join(" / ")+"</div>":"");
- div.onclick=()=>openCustomerModal(i);
- $("customerList").appendChild(div);
-});
- if(!customers.length)$("customerList").innerHTML="<div style='color:#777;text-align:center;padding:10px'>登録済み客先はありません。</div>";
- $("customerDetail").innerHTML="";
+ const box=$("customerList");
+ const detail=$("customerDetail");
+ box.innerHTML="";
+ detail.innerHTML="";
+ const sorted=customers.map((n,i)=>({n,i})).sort((a,b)=>String(a.n).localeCompare(String(b.n),"ja",{numeric:true,sensitivity:"base"}));
+ if(!sorted.length){
+   box.innerHTML="<div style='color:#777;text-align:center;padding:10px'>登録済み客先はありません。</div>";
+   return;
+ }
+ const select=document.createElement("select");
+ select.id="registeredCustomerSelect";
+ select.setAttribute("aria-label","登録済み客先");
+ const placeholder=document.createElement("option");
+ placeholder.value="";
+ placeholder.textContent="客先を選択";
+ placeholder.selected=true;
+ select.appendChild(placeholder);
+ sorted.forEach(({n,i})=>{
+   const option=document.createElement("option");
+   option.value=String(i);
+   option.textContent=n;
+   select.appendChild(option);
+ });
+ box.appendChild(select);
+ const editBtn=document.createElement("button");
+ editBtn.type="button";
+ editBtn.className="gray";
+ editBtn.textContent="選択した客先を編集";
+ editBtn.disabled=true;
+ editBtn.style.marginTop="10px";
+ box.appendChild(editBtn);
+ select.onchange=()=>{
+   const i=Number(select.value);
+   if(!select.value||!Number.isInteger(i)||!customers[i]){
+     editBtn.disabled=true;
+     detail.innerHTML="";
+     return;
+   }
+   editBtn.disabled=false;
+   const dept=departmentNames(customers[i]);
+   detail.innerHTML=dept.length
+     ? "<div style='margin-top:10px;color:#666;font-size:13px'>部署："+dept.map(esc).join(" / ")+"</div>"
+     : "";
+ };
+ editBtn.onclick=()=>{
+   const i=Number(select.value);
+   if(select.value&&Number.isInteger(i)&&customers[i]) openCustomerModal(i);
+ };
 }
 function openCustomerModal(i){
  const n=customers[i];if(n===undefined)return;
