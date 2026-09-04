@@ -1097,27 +1097,11 @@ function renderChemList(){
  });
  select.selectedIndex=-1;
  box.appendChild(select);
- const editBtn=document.createElement("button");
- editBtn.type="button";
- editBtn.className="gray";
- editBtn.textContent="選択した薬品を編集";
- editBtn.disabled=true;
- editBtn.style.marginTop="10px";
- box.appendChild(editBtn);
  select.onchange=()=>{
    const i=Number(select.value);
-   if(!select.value||!Number.isInteger(i)||!chemicals[i]){
-     editBtn.disabled=true;
-     detail.innerHTML="";
-     return;
+   if(select.value&&Number.isInteger(i)&&chemicals[i]){
+     openChemModal(i);
    }
-   editBtn.disabled=false;
-   const c=chemicals[i];
-   detail.innerHTML="<div style='margin-top:10px;color:#666;font-size:13px'>比重："+esc(String(c.density??""))+(c.cmTsum!=null?"　cm/t積："+esc(String(c.cmTsum)):"")+(c.warning?"　<span style='color:#ff3b30'>警告対象</span>":"")+"</div>";
- };
- editBtn.onclick=()=>{
-   const i=Number(select.value);
-   if(select.value&&Number.isInteger(i)&&chemicals[i]) openChemModal(i);
  };
 }
 function openChemModal(i){
@@ -1176,29 +1160,11 @@ function renderCustomers(){
  });
  select.selectedIndex=-1;
  box.appendChild(select);
- const editBtn=document.createElement("button");
- editBtn.type="button";
- editBtn.className="gray";
- editBtn.textContent="選択した客先を編集";
- editBtn.disabled=true;
- editBtn.style.marginTop="10px";
- box.appendChild(editBtn);
  select.onchange=()=>{
    const i=Number(select.value);
-   if(!select.value||!Number.isInteger(i)||!customers[i]){
-     editBtn.disabled=true;
-     detail.innerHTML="";
-     return;
+   if(select.value&&Number.isInteger(i)&&customers[i]){
+     openCustomerModal(i);
    }
-   editBtn.disabled=false;
-   const dept=departmentNames(customers[i]);
-   detail.innerHTML=dept.length
-     ? "<div style='margin-top:10px;color:#666;font-size:13px'>部署："+dept.map(esc).join(" / ")+"</div>"
-     : "";
- };
- editBtn.onclick=()=>{
-   const i=Number(select.value);
-   if(select.value&&Number.isInteger(i)&&customers[i]) openCustomerModal(i);
  };
 }
 function openCustomerModal(i){
