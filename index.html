@@ -1037,7 +1037,7 @@ function renderHistory(){
  $("historyDate").value=selected;
  const rows=history.filter(x=>(x.date||"")===selected).sort((a,b)=>(b.created||0)-(a.created||0));
  $("count").textContent=rows.length;
- $("totalKg").textContent=rows.reduce((s,x)=>s+Number(x.kg||0),0).toFixed(2);
+ $("totalKg").textContent=formatQuantity(Number(rows.reduce((s,x)=>s+Number(x.kg||0),0).toFixed(2)));
  const box=$("historyList");box.innerHTML="";
  if(!rows.length){box.innerHTML="<div style='color:#777;text-align:center;padding:18px'>この日の配達履歴はありません。</div>";return}
  rows.forEach(x=>{
