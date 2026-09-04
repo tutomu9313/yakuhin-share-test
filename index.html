@@ -1118,9 +1118,10 @@ function renderCustomers(){
  const select=document.createElement("select");
  select.id="registeredCustomerSelect";
  select.setAttribute("aria-label","登録済み客先");
- select.size=7;
+ select.size=12;
  select.style.width="100%";
  select.style.boxSizing="border-box";
+ select.style.height="240px";
  select.style.overflowY="auto";
  sorted.forEach(({n,i})=>{
    const option=document.createElement("option");
