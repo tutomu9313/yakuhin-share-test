@@ -166,7 +166,6 @@ nav button{height:45px;color:#007aff;font-size:13px;border-radius:10px}
 <select id="chemical"><option value="" selected>薬品を選択</option></select>
 <input id="density" type="text" aria-label="比重" placeholder="—" readonly>
 </div>
-<div class="note">薬品を選択すると登録済みの比重が表示されます。必要に応じて変更できます。</div>
 </div>
 
 <div class="card">
@@ -176,7 +175,6 @@ nav button{height:45px;color:#007aff;font-size:13px;border-radius:10px}
 <select id="unit"><option value="" selected>単位</option><option value="kg">kg</option><option value="L">L</option><option value="m3">m³</option></select>
 </div>
 
-<div class="note">入力計算結果を確認して「配達を保存」を押してください。</div>
 </div>
 
 <div id="resultCard" class="card" style="display:none">
@@ -1120,17 +1118,17 @@ function renderCustomers(){
  const select=document.createElement("select");
  select.id="registeredCustomerSelect";
  select.setAttribute("aria-label","登録済み客先");
- const placeholder=document.createElement("option");
- placeholder.value="";
- placeholder.textContent="客先を選択";
- placeholder.selected=true;
- select.appendChild(placeholder);
+ select.size=7;
+ select.style.width="100%";
+ select.style.boxSizing="border-box";
+ select.style.overflowY="auto";
  sorted.forEach(({n,i})=>{
    const option=document.createElement("option");
    option.value=String(i);
    option.textContent=n;
    select.appendChild(option);
  });
+ select.selectedIndex=-1;
  box.appendChild(select);
  const editBtn=document.createElement("button");
  editBtn.type="button";
