@@ -1304,7 +1304,7 @@ $("authSignupBtn").onclick=async()=>{
  if(!email||!password){setAuthMessage("メールアドレスとパスワードを入力してください。");return;}
  if(password.length<6){setAuthMessage("パスワードは6文字以上にしてください。");return;}
  setAuthMessage("アカウントを作成中…",true);
- const {data,error}=await supabaseClient.auth.signUp({email,password});
+ const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:"https://tutomu9313.github.io/yakuhin-share-test/"}});
  if(error){setAuthMessage("新規登録に失敗しました："+error.message);return;}
  if(data.session){setAuthMessage("登録しました。",true);}else{setAuthMessage("確認メールを送信しました。メールの確認後にログインしてください。",true);}
 };
