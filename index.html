@@ -38,8 +38,13 @@ nav{position:fixed;bottom:0;width:390px;max-width:100%;background:#fff;border-to
 nav button{margin:0;height:43px;background:transparent;color:#007aff;font-size:13px}
 .weekly-table{width:100%;border-collapse:collapse;font-size:13px}.weekly-table th,.weekly-table td{border:1px solid #d1d1d6;padding:7px 5px;text-align:left;vertical-align:top}.weekly-table th{font-weight:700;background:#f2f2f7}.weekly-table th:last-child,.weekly-table td:last-child{text-align:right;white-space:nowrap}.weekly-empty{text-align:center;color:#777;padding:18px}
 
-/* 登録済み客先・薬品：常時表示のスクロール式リストボックス（16行） */
-.registered-listbox-static{width:100%;height:calc(16 * 32px + 8px);overflow-y:auto;border:1px solid #d1d1d6;border-radius:12px;background:#fff;padding:4px;box-sizing:border-box}
+/* 登録済み客先・薬品：タップで開くスクロール式リストボックス */
+.registered-listbox{position:relative;width:100%;box-sizing:border-box}
+.registered-listbox-trigger{width:100%;height:48px;border:1px solid #d1d1d6;border-radius:12px;background:#fff;padding:0 13px;font-size:17px;text-align:left;color:#aaa;cursor:pointer;box-sizing:border-box}
+.registered-listbox-trigger::after{content:"⌄";float:right;color:#777;font-size:20px;line-height:20px;margin-top:1px}
+.registered-listbox.open .registered-listbox-trigger{border-color:#007aff}
+.registered-listbox-panel{display:none;position:absolute;z-index:30;left:0;right:0;top:54px;background:#fff;border:1px solid #d1d1d6;border-radius:12px;box-shadow:0 5px 18px rgba(0,0,0,.16);padding:4px;max-height:calc(12 * 32px + 8px);overflow-y:auto;box-sizing:border-box}
+.registered-listbox.open .registered-listbox-panel{display:block}
 .registered-listbox-option{min-height:32px;padding:5px 9px;box-sizing:border-box;font-size:17px;line-height:22px;border-radius:7px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .registered-listbox-option:hover,.registered-listbox-option:active{background:#e5e5ea}
 </style>
@@ -1075,24 +1080,40 @@ let editingChemIndex=-1;
 /* ===== 薬品登録 ===== */
 function renderChemList(){
  const box=$("chemList");
+ const detail=$("chemDetail");
  box.innerHTML="";
+ detail.innerHTML="";
  const sorted=chemicals.map((c,i)=>({c,i})).sort(chemCompare);
  if(!sorted.length){
    box.innerHTML="<div style='color:#777;text-align:center;padding:10px'>登録済み薬品はありません。</div>";
    return;
  }
- const list=document.createElement("div");
- list.className="registered-listbox-static";
- list.setAttribute("role","listbox");
+ const wrap=document.createElement("div");
+ wrap.className="registered-listbox";
+ wrap.id="registeredChemicalListbox";
+ const panel=document.createElement("div");
+ panel.className="registered-listbox-panel";
+ panel.setAttribute("role","listbox");
  sorted.forEach(({c,i})=>{
    const option=document.createElement("div");
    option.className="registered-listbox-option";
    option.textContent=c.name;
    option.setAttribute("role","option");
-   option.onclick=()=>openChemModal(i);
-   list.appendChild(option);
+   option.onclick=()=>{
+     openChemModal(i);
+   };
+   panel.appendChild(option);
  });
- box.appendChild(list);
+ trigger.onclick=()=>wrap.classList.toggle("open");
+ wrap.appendChild(trigger);
+ wrap.appendChild(panel);
+ box.appendChild(wrap);
+ document.addEventListener("click",function closeRegisteredChemList(e){
+   if(!wrap.contains(e.target)){
+     wrap.classList.remove("open");
+     document.removeEventListener("click",closeRegisteredChemList);
+   }
+ });
 }
 function openChemModal(i){
  const c=chemicals[i];
@@ -1126,24 +1147,32 @@ $("modalDeleteChem").onclick=()=>{
 let editingCustomerIndex=-1;
 function renderCustomers(){
  const box=$("customerList");
+ const detail=$("customerDetail");
  box.innerHTML="";
+ detail.innerHTML="";
  const sorted=customers.map((n,i)=>({n,i})).sort((a,b)=>String(a.n).localeCompare(String(b.n),"ja",{numeric:true,sensitivity:"base"}));
  if(!sorted.length){
    box.innerHTML="<div style='color:#777;text-align:center;padding:10px'>登録済み取引先はありません。</div>";
    return;
  }
- const list=document.createElement("div");
- list.className="registered-listbox-static";
- list.setAttribute("role","listbox");
+ const wrap=document.createElement("div");
+ wrap.className="registered-listbox";
+ wrap.id="registeredCustomerListbox";
+ const panel=document.createElement("div");
+ panel.className="registered-listbox-panel";
+ panel.setAttribute("role","listbox");
  sorted.forEach(({n,i})=>{
    const option=document.createElement("div");
    option.className="registered-listbox-option";
    option.textContent=n;
    option.setAttribute("role","option");
-   option.onclick=()=>openCustomerModal(i);
-   list.appendChild(option);
+   option.onclick=()=>{
+     openCustomerModal(i);
+   };
+   panel.appendChild(option);
  });
- box.appendChild(list);
+ wrap.appendChild(panel);
+ box.appendChild(wrap);
 }
 function openCustomerModal(i){
  const n=customers[i];if(n===undefined)return;
